@@ -1,0 +1,56 @@
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>hello</title>
+  </head>
+
+  <body>
+    <h1>
+      EventSource Demo</h1>
+    <button id="start">start</button>
+    <button id="stop">stop</button>
+    <ol id="list">
+
+    </ol>
+    <script>
+      let es
+      const fetchEventStream = (url, type, onMessage, onError) => {
+        const s = new EventSource(url)
+
+        s.addEventListener(type, e => {
+          onMessage(e.data)
+        })
+
+        s.addEventListener('error', onError)
+
+        return s
+      }
+
+      const ul = document.getElementById("list")
+
+      const appendListItem = text => {
+        let li = document.createElement('li')
+        li.innerText = `recieved: ${text}, local: ${new Date().getTime()}`
+        ul.appendChild(li)
+        li = null
+      }
+
+      document.body.addEventListener('click', e => {
+        switch (e.srcElement.id) {
+          case 'start':
+            if (!es) es = fetchEventStream('/testsse', 'message', appendListItem, console.log)
+            break
+          case 'stop':
+            es.close()
+            es = null
+            break
+        }
+      }, true)
+
+    </script>
+  </body>
+
+</html>
