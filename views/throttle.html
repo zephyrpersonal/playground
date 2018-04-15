@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+      #square {
+        background: red;
+        width: 200px;
+        height: 200px;
+        transform: translate3d(0, 0, 0);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="square"></div>
+    <script>
+      const sq = document.getElementById("square")
+
+      let startX = 0
+      let startY = 0
+
+      sq.addEventListener("touchstart", e => {
+        e.preventDefault()
+        const { pageX, pageY } = e.touches[0]
+
+        startX = pageX
+        startY = pageY
+
+        const updatePos = e => {
+          const { pageX, pageY } = e.touches[0]
+          sq.style.webkitTransform = sq.style.transform = `translate3d(${pageX + startX}px,${pageY + startY}px,0)`
+        }
+
+        const remove = e => {
+          sq.removeEventListener("touchmove", updatePos)
+          sq.removeEventListener("touchend", remove)
+        }
+
+        sq.addEventListener("touchmove", updatePos)
+        sq.addEventListener("touchend", remove)
+      })
+
+
+    </script>
+  </body>
+
+</html>

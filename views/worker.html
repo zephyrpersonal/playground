@@ -1,0 +1,43 @@
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Worker</title>
+  </head>
+
+  <body>
+    <h1>Worker Demo</h1>
+    <button id="do">use a worker to do some calculation</button>
+    <script>
+      const calScript = `
+        postMessage("123")
+      `
+      document.getElementById("do").addEventListener("click", () => {
+
+        calculate().then(e => {
+          console.log(e.data)
+        })
+
+      })
+      function calculate() {
+        let scriptBlob = new Blob([calScript], { type: 'text/javascript' })
+        const scriptUrl = window.URL.createObjectURL(scriptBlob)
+        let worker = new Worker(scriptUrl)
+        window.URL.revokeObjectURL(scriptBlob)
+        scriptBlob = null
+
+        const promise = new Promise((res, rej) => {
+          worker.onmessage = e => {
+            res(e)
+          }
+          worker.onerror = e => rej(e)
+        })
+
+        return promise
+      }
+    </script>
+  </body>
+
+</html>
